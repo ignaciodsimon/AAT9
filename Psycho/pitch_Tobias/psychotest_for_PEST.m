@@ -123,5 +123,6 @@ treshold = mean(lastn);
 plot(1:Nlast,lastn,'-o',1:Nlast,treshold.*ones(1,Nlast),'--');legend('last reversal points',['mean = ',num2str(treshold)]);
 
 
-%dlmwrite('data.txt',output,'-append','roffset',1,'delimiter','\t');
-%dlmwrite('data.txt',output,'delimiter','\t');
+output = lastn;
+dlmwrite('data.txt',output,'delimiter','\t');
+
