@@ -146,6 +146,16 @@ function frequency_discriminating_test()
     ylabel('Frequency delta [Hz]');
     title(sprintf('Final result: %.3f [Hz]', obtained_precision));
     grid();
+    
+    % Gets name for saving plot
+    filename = inputdlg('Enter filename to save plot:',...
+             'Save plot', [1 50]);
+    filename = filename{1};
+
+    % Saves plot to PDF
+    set(gcf, 'PaperPosition', [0 0 8.15 3.15]);
+    set(gcf, 'PaperSize', [8.1 3.1]);
+    saveas(gcf, filename, 'pdf');
 
 
 end
