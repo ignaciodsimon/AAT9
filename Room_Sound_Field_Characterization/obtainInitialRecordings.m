@@ -45,6 +45,29 @@ end
 
 
 
+% Testing the IR computation:
+
+recordingHandler = audiorecorder(44100, 16, 2);
+record(recordingHandler);
+playblocking(audioplayer(mlsSignal, 44100));
+pause(0.1); % This is necessary to let the "tail" of the reverb in
+stop(recordingHandler);
+recordedAudios = getaudiodata(recordingHandler, 'int16');
+
+audio1 = recordedAudios(:, 1);
+audio2 = recordedAudios(:, 2);
+
+computedIR1 = computeIRFromMLS(mlsSignal, audio1);
+computedIR2 = computeIRFromMLS(mlsSignal, audio2);
+
+finalIR = compensateIRWithReference(computedIR1, computedIR2);
+
+plot(finalIR);
+
+
+
+
+
 
 % Fifth:  process the recordings to obtain the IRs (deconvolution).
 
