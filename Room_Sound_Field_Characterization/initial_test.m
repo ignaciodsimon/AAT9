@@ -3,20 +3,15 @@
 %
 
 
-% First:  generate the pattern signal (MLS).
 
-% Second: create the audio signal for the six loudspeakers, multiplexing on
-%         time and with a time guard between different loudspeakers to 
-%         allow for the reverberation to decay.
+% 1 - Obtain recordings
+initialData = obtainInitialRecordings();
 
-% Third:  include the signal on the "Ref" channel, to compensate for the
-%         delay on the acquisition system.
 
-% Fourth: start the recording on all 16 channels (15 + 1 ref) and play the
-%         previously created signal to all six loudspeakers.
+% 2 - Estimate time delays from recordings
 
-% Fifth:  process the recordings to obtain the IRs (deconvolution).
 
-% Sixth:  find out the associated delay time calling the necessary function
-%         and store the results for all IRs.
+
+% 3 - Estimate positions from time delays
+
 
