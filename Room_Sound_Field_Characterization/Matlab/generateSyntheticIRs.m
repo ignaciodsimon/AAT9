@@ -31,7 +31,7 @@ distmatrix = intermediatedistspk;
 timematrix = distmatrix ./c;
 
 %convert to samples
-samplesmatrix = round(timematrix .*fs)
+samplesmatrix = round(timematrix .*fs);
 
 
 %convert samples to IRs and assign them to speaker object
