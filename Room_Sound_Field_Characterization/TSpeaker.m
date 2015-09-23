@@ -1,7 +1,7 @@
 % Class for speaker
 
 classdef TSpeaker
-    
+
     properties
         width         %(float) width of the speaker
         height        %(float) height of the speaker

@@ -5,9 +5,14 @@ function computedIR = computeIRFromMLS(usedMLS, recordedSignal)
     % Joe.
 
     % Padds the MLS signal to match the length of the recording
-    b = [double(usedMLS) zeros(1, length(recordedSignal) - length(usedMLS))];
-    a = double(recordedSignal)';
-    
+    if length(recordedSignal) > length(usedMLS)
+        a = [double(usedMLS) zeros(1, length(recordedSignal) - length(usedMLS))];
+        b = double(recordedSignal);
+    else
+        b = [double(recordedSignal) zeros(1, length(usedMLS) - length(recordedSignal))];
+        a = double(usedMLS);
+    end
+
     % Normalization
     na = norm(a);
     nb = norm(b);
