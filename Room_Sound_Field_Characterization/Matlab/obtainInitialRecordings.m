@@ -3,8 +3,8 @@ function outputData = obtainInitialRecordings()
 
 %% Constants definitions
 SAMPLING_FREQ = 44100;
-MLS_SIGNAL_ORDER = 6;
-MLS_GUARD_TIME = 1.0; % Note: this should come from a pre-test to find out
+MLS_SIGNAL_ORDER = 12;
+MLS_GUARD_TIME = 0.5; % Note: this should come from a pre-test to find out
                       %       how big is the room, and therefore how long
                       %       this guard-time has to be.
 
@@ -21,43 +21,7 @@ for i = 1:7
 end
 
 
-
-
-
-
-% 
-% % Testing the IR computation:
-% 
-% recordingHandler = audiorecorder(44100, 16, 2);
-% record(recordingHandler);
-% playblocking(audioplayer(mlsSignal, 44100));
-% pause(0.1); % This is necessary to let the "tail" of the reverb in
-% stop(recordingHandler);
-% recordedAudios = getaudiodata(recordingHandler, 'int16');
-% 
-% audio1 = recordedAudios(:, 1)';
-% audio2 = recordedAudios(:, 2)';
-% 
-% computedIR1 = computeIRFromMLS(mlsSignal, audio1);
-% computedIR2 = computeIRFromMLS(mlsSignal, audio2);
-% 
-% finalIR = compensateIRWithReference(computedIR1, computedIR2);
-% 
-% plot(finalIR);
-% 
-% return
-
-
-
-
-
-
-
-
-
-
 %% Third:  play the generated signal and record all 16 channels. 
-
 
 referenceRecording = zeros(1, 10);
 
@@ -492,17 +456,12 @@ speakerData(6).microphones(3).recordings(6).fromSpeaker = 6;
 speakerData(6).microphones(3).recordings(6).recording = speaker6recordings_micC_fromspeaker6;
 
 
-%% Fifth:  process the recordings to obtain the IRs (deconvolution).
-%
-% This means it has to obtain the IR from each recording and then
-% compensate it with the reference IR.
+%% Fifth:  process the recordings to obtain the IRs (deconvolution) and corresponding time delay.
 
 referenceIR = computeIRFromMLS(mlsSignal, referenceRecording);
 
 for currentReceivingSpeakerIndex = 1 : 6
-
     for currentMicIndex = 1 : 3
-        
         for currentTransmittingSpeakerIndex = 1 : 3
 
             % Computes the IR
@@ -517,21 +476,14 @@ for currentReceivingSpeakerIndex = 1 : 6
                 
             % Find out associated delay time for each IR
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).estimatedTime = ...
-                
+                estimateDelay( ...
+                    speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR, ...
+                    SAMPLING_FREQ);
+
         end
     end
     
 end
-
-
-
-
-
-
-
-%% Sixth:  find out the associated delay time calling the necessary function
-%         and store the results for all IRs.
-
 
     outputData = speakerData;
 end
@@ -539,7 +491,7 @@ end
 
 
 
-% Test code to plot the generated signals:
+%% Test code to plot the generated signals:
 % 
 % hold on
 % plot(excitationSignal(1,:), 'b');
@@ -550,7 +502,8 @@ end
 % plot(excitationSignal(6,:), 'c');
 % plot(excitationSignal(7,:), 'o');
 
-% Third:  include the signal on the "Ref" channel, to compensate for the
+
+%% Third:  include the signal on the "Ref" channel, to compensate for the
 %         delay on the acquisition system.
 
 
@@ -570,7 +523,7 @@ end
 
 
 
-% % Testing the IR computation:
+%% Testing the IR computation:
 % 
 % recordingHandler = audiorecorder(44100, 16, 2);
 % record(recordingHandler);

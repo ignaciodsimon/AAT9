@@ -19,16 +19,17 @@ function computedIR = computeIRFromMLS(usedMLS, recordedSignal)
     a = a / na;
     b = b / nb;
 
-    % The main loop is equivalent to the MatLab function (and takes the
-    % same amount of time)
-    % [x, c] = cxcorr(a, b);
+    % Circular cross-correlation
+    [~, c] = cxcorr(a, b);
 
-    c = zeros(size(a));
-    for k = 1 : length(b)
-        c(k) = a * b';
-        % Circular shift
-        b = [b(end), b(1:end-1)];
-    end
+    % This is equivalent to the matlab "cxcorr()" function
+    %     c = zeros(size(a));
+    %     for k = 1 : length(b)
+    %         c(k) = a * b';
+    %         % Circular shift
+    %         b = [b(end), b(1:end-1)];
+    %     end
+
     computedIR = c;
 
 end
