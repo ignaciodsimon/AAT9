@@ -2,8 +2,9 @@
 
 classdef TRecordings
    properties
-       fromSpeaker % (int) from which speaker 
-       recording    % (float[]) actual recording vector
+       fromSpeaker       % (int) from which speaker 
+       computedIR        % (float[]) estimated IR from the recording
+       recording         % (float[]) actual recording vector
        estimatedTime     % estimated time from speaker to microphone
    end
 
