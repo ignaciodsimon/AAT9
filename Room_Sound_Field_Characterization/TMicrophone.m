@@ -1,17 +1,15 @@
-
 %% Subclass of TSpeaker
-
 
 classdef TMicrophone
     properties
-        ID              %(string) letter of Microphone [A,B,C]
-        Recordings      %(Class) contains recordings & estimated times for each speaker
+        id              %(string) letter of Microphone [A,B,C]
+        recordings      %(Class) contains recordings & estimated times for each speaker
     end
-    
-    methods 
+
+    methods
         function this = TMicrophone()
-        this.Recordings = [TRecordings() TRecordings() TRecordings() TRecordings() TRecordings() TRecordings()];
+        this.recordings = [TRecordings() TRecordings() TRecordings() TRecordings() TRecordings() TRecordings()];
         end
     end
-   
+
 end
