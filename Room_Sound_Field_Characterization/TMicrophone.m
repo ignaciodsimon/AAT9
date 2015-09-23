@@ -9,8 +9,8 @@ classdef TMicrophone
     end
     
     methods 
-        function this=TMicrophone()
-        this.Recordings = TRecordings();
+        function this = TMicrophone()
+        this.Recordings = [TRecordings() TRecordings() TRecordings() TRecordings() TRecordings() TRecordings()];
         end
     end
    
