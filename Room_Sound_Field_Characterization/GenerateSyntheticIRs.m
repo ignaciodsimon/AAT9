@@ -58,7 +58,7 @@ end
 for i=1:length(x)
 Speakerarray(3).id = 3;
 Speakerarray(3).microphones(2).id = 2;
-Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(3,i)) 1];
 Speakerarray(3).microphones(2).recordings(3).computedIR = [1];
 Speakerarray(3).microphones(2).recordings(i).fromSpeaker = i;
 end
@@ -67,7 +67,7 @@ end
 for i=1:length(x)
 Speakerarray(4).id = 4;
 Speakerarray(4).microphones(2).id = 2;
-Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(4,i)) 1];
 Speakerarray(4).microphones(2).recordings(4).computedIR = [1];
 Speakerarray(4).microphones(2).recordings(i).fromSpeaker = i;
 end
@@ -76,7 +76,7 @@ end
 for i=1:length(x)
 Speakerarray(5).id = 5;
 Speakerarray(5).microphones(2).id = 2;
-Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(5,i)) 1];
 Speakerarray(5).microphones(2).recordings(5).computedIR = [1];
 Speakerarray(5).microphones(2).recordings(i).fromSpeaker = i;
 end
