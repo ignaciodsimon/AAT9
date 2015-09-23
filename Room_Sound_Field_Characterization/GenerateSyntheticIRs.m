@@ -31,53 +31,53 @@ distmatrix = intermediatedistspk;
 timematrix = distmatrix ./c;
 
 %convert to samples
-samplesmatrix = round(timematrix .*fs);
+samplesmatrix = round(timematrix .*fs)
 
 
-%convert samples to IRs and assign them to speakerobject
+%convert samples to IRs and assign them to speaker object
 
 %For speaker 1
-for i=2:length(x)
+for i=1:length(x)
 Speakerarray(1).id = 1;
 Speakerarray(1).microphones(2).id = 2;
-Speakerarray(1).microphones(2).recordings(1).computedIR = [1];
 Speakerarray(1).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(1,i)) 1];
+Speakerarray(1).microphones(2).recordings(1).computedIR = [1];
 Speakerarray(1).microphones(2).recordings(i).fromSpeaker = i;
 end
 
 %For speaker 2
-for i=2:length(x)
+for i=1:length(x)
 Speakerarray(2).id = 2;
 Speakerarray(2).microphones(2).id = 2;
-Speakerarray(2).microphones(2).recordings(1).computedIR = [1];
 Speakerarray(2).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(2).microphones(2).recordings(2).computedIR = [1];
 Speakerarray(2).microphones(2).recordings(i).fromSpeaker = i;
 end
 
 %For speaker 3
-for i=2:length(x)
+for i=1:length(x)
 Speakerarray(3).id = 3;
 Speakerarray(3).microphones(2).id = 2;
-Speakerarray(3).microphones(2).recordings(1).computedIR = [1];
-Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(3,i)) 1];
+Speakerarray(3).microphones(2).recordings(3).computedIR = [1];
 Speakerarray(3).microphones(2).recordings(i).fromSpeaker = i;
 end
 
 %For speaker 4
-for i=2:length(x)
+for i=1:length(x)
 Speakerarray(4).id = 4;
 Speakerarray(4).microphones(2).id = 2;
-Speakerarray(4).microphones(2).recordings(1).computedIR = [1];
-Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(4,i)) 1];
+Speakerarray(4).microphones(2).recordings(4).computedIR = [1];
 Speakerarray(4).microphones(2).recordings(i).fromSpeaker = i;
 end
 
 %For speaker 5
-for i=2:length(x)
+for i=1:length(x)
 Speakerarray(5).id = 5;
 Speakerarray(5).microphones(2).id = 2;
-Speakerarray(5).microphones(2).recordings(1).computedIR = [1];
-Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(2,i)) 1];
+Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrix(5,i)) 1];
+Speakerarray(5).microphones(2).recordings(5).computedIR = [1];
 Speakerarray(5).microphones(2).recordings(i).fromSpeaker = i;
 end
              
