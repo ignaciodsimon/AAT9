@@ -12,11 +12,11 @@
 
 function [C] = find_pos(A,B,t_ac,t_bc)
 
+c = 340;
 
 
-
-d_ac = t_ac * C_0;
-d_bc = t_bc * C_0;
+d_ac = t_ac * c;
+d_bc = t_bc * c;
 
 d_ab = sqrt((B(2)-A(2))^2 + (B(1)-A(1))^2); % distance AB
 
