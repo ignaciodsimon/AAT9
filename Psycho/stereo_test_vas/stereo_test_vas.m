@@ -2,7 +2,16 @@
 function stereo_test_vas(inputarg)
 
     [position, slider] = showLocalizationPlot();
-    disp(sprintf('Position: %d,%d. Slider: %d', position(1), position(2), slider));
+    disp(sprintf('Position: %.2f, %.2f. Slider: %.2f', position(1), position(2), slider));
+
+    
+    
+    
+    
+end
+
+function outputSound = convolveSound()
+
 
 end
 
@@ -78,7 +87,7 @@ function [position, slider] = showLocalizationPlot()
                             'Position',[130 50 250 20]);
 
             % Wires callback for the slider
-            set(hsl, 'Callback', @callbackSlider )  
+            set(hsl, 'Callback', @callbackSlider)
 
             % Adds boton to continue
             uicontrol('Style', 'pushbutton', 'String', 'Continue',...
@@ -94,14 +103,14 @@ function [position, slider] = showLocalizationPlot()
 
             % Adds label for 'very fake'
             uicontrol('Style','text',...
-                'Position',[90 50 30 30],...
+                'Position',[80 30 40 50],...
                 'BackgroundColor', backColor, ...
                 'FontSize', 14, ...
                 'String', sprintf('Very\nfake'));
 
             % Adds label for 'very realistic'
             uicontrol('Style','text',...
-                'Position',[390 50 50 30],...
+                'Position',[390 30 70 50],...
                 'BackgroundColor', backColor, ...
                 'FontSize', 14, ...
                 'String', sprintf('Very\nrealistic'));
