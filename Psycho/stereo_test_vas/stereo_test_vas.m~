@@ -8,7 +8,7 @@ function stereo_test_vas(inputarg)
     % 1 - Present the test procedure to the user (brief instructions)
     % 2 - Familiarization ("this is inside", "this is outside")
     % 3 - Randomize the order or presentation
-    % 4 - Retrieve data and save it a text file
+    % 4 - 
 
 
 
