@@ -46,23 +46,25 @@ end
 
 %Add it to existing coordinates
 for i = 1:length(x)
-    mic1xcoord(i) = x(i) + mic1Xmove(i);
-    mic1ycoord(i) = y(i) + mic1Ymove(i);
-    mic3xcoord(i) = x(i) + mic3Xmove(i);
-    mic3ycoord(i) = y(i) + mic3Ymove(i);
+    mic1Xcoord(i) = x(i) + mic1Xmove(i);
+    mic1Ycoord(i) = y(i) + mic1Ymove(i);
+    mic3Xcoord(i) = x(i) + mic3Xmove(i);
+    mic3Ycoord(i) = y(i) + mic3Ymove(i);
 end
 
 %Calculate distances between speakers (Microphone 1 and 3)
 for k = 1:length(x)
 for i = 1:length(x) 
-    intermediatedistspkmic1(k,i) = sqrt(((mic1xcoord(k)-x(i))^2+(mic1ycoord(k)-y(i))^2));
-    intermediatedistspkmic3(k,i) = sqrt(((mic3xcoord(k)-x(i))^2+(mic3ycoord(k)-y(i))^2));
+    intermediatedistspkmic1(k,i) = sqrt(((mic1Xcoord(k)-x(i))^2+(mic1Ycoord(k)-y(i))^2));
+    intermediatedistspkmic3(k,i) = sqrt(((mic3Xcoord(k)-x(i))^2+(mic3Ycoord(k)-y(i))^2));
 end
 end
 
 distmatrixmic1 = intermediatedistspkmic1;
 distmatrixmic3 = intermediatedistspkmic3;
-
+% distmatrixmic1
+% distmatrixmic2
+% distmatrixmic3
 %Calculate the IR based on distmatrix
 
 %convert to time
@@ -74,7 +76,7 @@ samplesmatrixmic1 = round(timematrixmic1 .*fs);
 samplesmatrixmic3 = round(timematrixmic3 .*fs);
 
 
-%convert samples to IRs and assign them to speaker object along with delay
+%% Convert samples to IRs and assign them to speaker object along with delay
 
 %For speaker 1
 for i=1:length(x)
@@ -82,16 +84,20 @@ Speakerarray(1).id = 1;
 Speakerarray(1).microphones(1).id = 1;
 Speakerarray(1).microphones(2).id = 2;
 Speakerarray(1).microphones(3).id = 3;
+%mic1
 Speakerarray(1).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(1,i)) 1];
 Speakerarray(1).microphones(1).recordings(i).fromSpeaker = i;
 Speakerarray(1).microphones(1).recordings(i).estimatedTime = estimateDelay(Speakerarray(1).microphones(1).recordings(i).computedIR, fs);
+%mic2
 Speakerarray(1).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(1,i)) 1];
-Speakerarray(1).microphones(2).recordings(1).computedIR = [1];
 Speakerarray(1).microphones(2).recordings(i).fromSpeaker = i;
 Speakerarray(1).microphones(2).recordings(i).estimatedTime = estimateDelay(Speakerarray(1).microphones(2).recordings(i).computedIR, fs);
+%mic3
 Speakerarray(1).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(1,i)) 1];
 Speakerarray(1).microphones(3).recordings(i).fromSpeaker = i;
 Speakerarray(1).microphones(3).recordings(i).estimatedTime = estimateDelay(Speakerarray(1).microphones(3).recordings(i).computedIR, fs);
+
+Speakerarray(1).microphones(2).recordings(1).computedIR = [1];
 
 end
 
@@ -101,16 +107,19 @@ Speakerarray(2).id = 2;
 Speakerarray(2).microphones(1).id = 1;
 Speakerarray(2).microphones(2).id = 2;
 Speakerarray(2).microphones(3).id = 3;
-Speakerarray(2).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(1,i)) 1];
+%mic1
+Speakerarray(2).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(2,i)) 1];
 Speakerarray(2).microphones(1).recordings(i).fromSpeaker = i;
 Speakerarray(2).microphones(1).recordings(i).estimatedTime = estimateDelay(Speakerarray(2).microphones(1).recordings(i).computedIR, fs);
-Speakerarray(2).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(1,i)) 1];
-Speakerarray(2).microphones(2).recordings(1).computedIR = [1];
+%mic2
+Speakerarray(2).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(2,i)) 1];
 Speakerarray(2).microphones(2).recordings(i).fromSpeaker = i;
 Speakerarray(2).microphones(2).recordings(i).estimatedTime = estimateDelay(Speakerarray(2).microphones(2).recordings(i).computedIR, fs);
-Speakerarray(2).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(1,i)) 1];
+%mic3
+Speakerarray(2).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(2,i)) 1];
 Speakerarray(2).microphones(3).recordings(i).fromSpeaker = i;
 Speakerarray(2).microphones(3).recordings(i).estimatedTime = estimateDelay(Speakerarray(2).microphones(3).recordings(i).computedIR, fs);
+Speakerarray(2).microphones(2).recordings(2).computedIR = [1];
 end
 
 %For speaker 3
@@ -119,16 +128,20 @@ Speakerarray(3).id = 3;
 Speakerarray(3).microphones(1).id = 1;
 Speakerarray(3).microphones(2).id = 2;
 Speakerarray(3).microphones(3).id = 3;
-Speakerarray(3).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(1,i)) 1];
+%mic1
+Speakerarray(3).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(3,i)) 1];
 Speakerarray(3).microphones(1).recordings(i).fromSpeaker = i;
 Speakerarray(3).microphones(1).recordings(i).estimatedTime = estimateDelay(Speakerarray(3).microphones(1).recordings(i).computedIR, fs);
-Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(1,i)) 1];
-Speakerarray(3).microphones(2).recordings(1).computedIR = [1];
+%mic2
+Speakerarray(3).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(3,i)) 1];
 Speakerarray(3).microphones(2).recordings(i).fromSpeaker = i;
 Speakerarray(3).microphones(2).recordings(i).estimatedTime = estimateDelay(Speakerarray(3).microphones(2).recordings(i).computedIR, fs);
-Speakerarray(3).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(1,i)) 1];
+%mic3
+Speakerarray(3).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(3,i)) 1];
 Speakerarray(3).microphones(3).recordings(i).fromSpeaker = i;
 Speakerarray(3).microphones(3).recordings(i).estimatedTime = estimateDelay(Speakerarray(3).microphones(3).recordings(i).computedIR, fs);
+Speakerarray(3).microphones(2).recordings(3).computedIR = [1];
+
 end
 
 %For speaker 4
@@ -137,16 +150,20 @@ Speakerarray(4).id = 4;
 Speakerarray(4).microphones(1).id = 1;
 Speakerarray(4).microphones(2).id = 2;
 Speakerarray(4).microphones(3).id = 3;
-Speakerarray(4).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(1,i)) 1];
+%mic1
+Speakerarray(4).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(4,i)) 1];
 Speakerarray(4).microphones(1).recordings(i).fromSpeaker = i;
 Speakerarray(4).microphones(1).recordings(i).estimatedTime = estimateDelay(Speakerarray(4).microphones(1).recordings(i).computedIR, fs);
-Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(1,i)) 1];
-Speakerarray(4).microphones(2).recordings(1).computedIR = [1];
+%mic2
+Speakerarray(4).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(4,i)) 1];
 Speakerarray(4).microphones(2).recordings(i).fromSpeaker = i;
 Speakerarray(4).microphones(2).recordings(i).estimatedTime = estimateDelay(Speakerarray(4).microphones(2).recordings(i).computedIR, fs);
-Speakerarray(4).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(1,i)) 1];
+%mic3
+Speakerarray(4).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(4,i)) 1];
 Speakerarray(4).microphones(3).recordings(i).fromSpeaker = i;
 Speakerarray(4).microphones(3).recordings(i).estimatedTime = estimateDelay(Speakerarray(4).microphones(3).recordings(i).computedIR, fs);
+Speakerarray(4).microphones(2).recordings(4).computedIR = [1];
+
 end
 
 %For speaker 5
@@ -155,20 +172,21 @@ Speakerarray(5).id = 5;
 Speakerarray(5).microphones(1).id = 1;
 Speakerarray(5).microphones(2).id = 2;
 Speakerarray(5).microphones(3).id = 3;
-Speakerarray(5).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(1,i)) 1];
+%mic1
+Speakerarray(5).microphones(1).recordings(i).computedIR = [zeros(1,samplesmatrixmic1(5,i)) 1];
 Speakerarray(5).microphones(1).recordings(i).fromSpeaker = i;
 Speakerarray(5).microphones(1).recordings(i).estimatedTime = estimateDelay(Speakerarray(5).microphones(1).recordings(i).computedIR, fs);
-Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(1,i)) 1];
-Speakerarray(5).microphones(2).recordings(1).computedIR = [1];
+%mic2
+Speakerarray(5).microphones(2).recordings(i).computedIR = [zeros(1,samplesmatrixmic2(5,i)) 1];
 Speakerarray(5).microphones(2).recordings(i).fromSpeaker = i;
 Speakerarray(5).microphones(2).recordings(i).estimatedTime = estimateDelay(Speakerarray(5).microphones(2).recordings(i).computedIR, fs);
-Speakerarray(5).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(1,i)) 1];
+%mic3
+Speakerarray(5).microphones(3).recordings(i).computedIR = [zeros(1,samplesmatrixmic3(5,i)) 1];
 Speakerarray(5).microphones(3).recordings(i).fromSpeaker = i;
 Speakerarray(5).microphones(3).recordings(i).estimatedTime = estimateDelay(Speakerarray(5).microphones(3).recordings(i).computedIR, fs);
+Speakerarray(5).microphones(2).recordings(5).computedIR = [1];
+
 end
-
-%% Save delay based on IR into speaker class
-
-     
+    
 
 end
