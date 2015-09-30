@@ -41,15 +41,15 @@ samplesmatrixmic2 = round(timematrixmic2 .*fs);
 %speaker
 for i = 1:length(x)
     mic1Xmove(i) = a*cos(-phi(i)*pi/180);
-    mic1Ymove(i) = -a*sin(-phi(i)*pi/180);
+    mic1Ymove(i) = -(a)*sin(-phi(i)*pi/180);
     mic3Xmove(i) = a*cos(-phi(i)*pi/180);
-    mic3Ymove(i) = -a*sin(-phi(i)*pi/180);
+    mic3Ymove(i) = -(a)*sin(-phi(i)*pi/180);
 end
 
 %Add it to existing coordinates
 for i = 1:length(x)
-    mic1Xcoord(i) = x(i) + mic1Xmove(i);
-    mic1Ycoord(i) = y(i) + mic1Ymove(i);
+    mic1Xcoord(i) = x(i) - mic1Xmove(i);
+    mic1Ycoord(i) = y(i) - mic1Ymove(i);
     mic3Xcoord(i) = x(i) + mic3Xmove(i);
     mic3Ycoord(i) = y(i) + mic3Ymove(i);
 end
