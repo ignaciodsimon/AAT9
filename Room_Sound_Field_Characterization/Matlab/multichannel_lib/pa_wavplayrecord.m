@@ -107,7 +107,7 @@ if length(varargin)>=7,
 end
 
 if device_opt==1, % asio
-    fprintf('Using ASIO driver\n');
+    %fprintf('Using ASIO driver\n');
     y = pawavplaya(playbuffer, playdevice, fs, recfirstchannel, reclastchannel, recnsamples, recdevice);
 elseif device_opt==2, % win
     fprintf('Using WMME driver\n');
@@ -120,7 +120,7 @@ elseif device_opt==4, % wasapi
     y = pawavplaywasapi(playbuffer, playdevice, fs, recfirstchannel, reclastchannel, recnsamples, recdevice);
 end
 
-fprintf('Converting result to doubles\n');
+%fprintf('Converting result to doubles\n');
 y = double(y);
 
 % [EOF] pa_wavplayrecord.m
