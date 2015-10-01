@@ -4,15 +4,18 @@ function outputData = obtainInitialRecordings()
 clc
 addpath('multichannel_lib', 'classes');
 
+disp(sprintf('<[ INITIAL SETUP MEASUREMENTS ]>\n'));
+
 %% Constants definitions
 SAMPLING_FREQ = 44100;
-INITIAL_DELAY_SAMPLES = 2000;
-MLS_SIGNAL_ORDER = 12;
-MLS_GUARD_TIME = 0.5; % Note: this should come from a pre-test to find out
+INITIAL_DELAY_SAMPLES = 100;
+MLS_SIGNAL_ORDER = 10;
+MLS_GUARD_TIME = 0.1; % Note: this should come from a pre-test to find out
                       %       how big is the room, and therefore how long
                       %       this guard-time has to be.
 
 %% First:  generate the pattern signal (MLS).
+disp('  > Generating excitation signals.');
 mlsSignal = generateMLS(MLS_SIGNAL_ORDER);
 
 %% Second: create the audio signal for the six loudspeakers, multiplexing on
@@ -25,6 +28,7 @@ for i = 1 : 7
 end
 
 % Give some extra space at the beginning
+disp(sprintf('  > Playing and recording.\n'));
 initialDelayZeros = zeros(INITIAL_DELAY_SAMPLES, size(excitationSignal, 2));
 excitationSignal = [initialDelayZeros; excitationSignal];
 
@@ -39,19 +43,29 @@ recordedAudio = playAndRecord(excitationSignal, length(excitationSignal), SAMPLI
 %     xlabel(sprintf('Channel %d', i));
 % end
 
+tempLine = zeros(length(recordedAudio), 1);
+
 % Find cut limits for the recorded signals
 startPoints = zeros(7, 1);
 endPoints = zeros(7, 1);
 for i = 1:7
-    currentStartPoint = ((i-1) * ceil(size(recordedAudio, 1) /7)) + 1;
+    %currentStartPoint = ((i-1) * ceil(size(recordedAudio, 1) /7)) + 1;
+    currentStartPoint = (i-1) * (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ)) + 1;
     currentEndPoint = (i * ceil(size(recordedAudio, 1) /7)) -2;
     startPoints(i) = currentStartPoint;
-    endPoints(i) = currentEndPoint;
+    
+    if currentEndPoint > length(recordedAudio)
+        endPoints(i) = length(recordedAudio);
+    else
+        endPoints(i) = currentEndPoint;
+    end
+    
+    tempLine(currentStartPoint) = 1;
 end
 
 
 %% Third:  play the generated signal and record all 16 channels. 
-
+disp(sprintf('\n  > Splitting recordings.'));
 
 % Constants for simplifying the code below
 MIC1 = 1; MIC2 = 2; MIC3 = 3; MIC4 = 4; MIC5 = 5; MIC6 = 6; MIC7 = 7;
@@ -59,8 +73,9 @@ MIC8 = 8; MIC9 = 9; MIC10 = 10; MIC11 = 11; MIC12 = 12; MIC13 = 13;
 MIC14 = 14; MIC15 = 15; LOOPIN = 16; L = 1; R = 2; C = 3; LFE = 4;
 LS = 5; RS = 6; LOOPOUT = 7;
 
-% Loop for IR compensation
+% Loop signal for IR compensation
 referenceRecording = recordedAudio(startPoints(LOOPOUT) : endPoints(LOOPOUT), LOOPIN);
+
 
 % Mics from speaker 1 (L)
 
@@ -136,26 +151,26 @@ speaker_C_recordings_micC_fromspeakerLFE = recordedAudio(startPoints(LFE) : endP
 
 % Mics from speaker 4 (LFE)
 
-speaker_LFE_recordings_micA_fromspeakerL = zeros(1,1);
-speaker_LFE_recordings_micA_fromspeakerR = zeros(1,1);
-speaker_LFE_recordings_micA_fromspeakerC = zeros(1,1);
-speaker_LFE_recordings_micA_fromspeakerLS = zeros(1,1);
-speaker_LFE_recordings_micA_fromspeakerRS = zeros(1,1);
-speaker_LFE_recordings_micA_fromspeakerLFE = zeros(1,1);
+speaker_LFE_recordings_micA_fromspeakerL = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micA_fromspeakerR = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micA_fromspeakerC = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micA_fromspeakerLS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micA_fromspeakerRS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micA_fromspeakerLFE = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
 
-speaker_LFE_recordings_micB_fromspeakerL = zeros(1,1);
-speaker_LFE_recordings_micB_fromspeakerR = zeros(1,1);
-speaker_LFE_recordings_micB_fromspeakerC = zeros(1,1);
-speaker_LFE_recordings_micB_fromspeakerLS = zeros(1,1);
-speaker_LFE_recordings_micB_fromspeakerRS = zeros(1,1);
-speaker_LFE_recordings_micB_fromspeakerLFE = zeros(1,1);
+speaker_LFE_recordings_micB_fromspeakerL = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micB_fromspeakerR = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micB_fromspeakerC = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micB_fromspeakerLS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micB_fromspeakerRS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micB_fromspeakerLFE = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
 
-speaker_LFE_recordings_micC_fromspeakerL = zeros(1,1);
-speaker_LFE_recordings_micC_fromspeakerR = zeros(1,1);
-speaker_LFE_recordings_micC_fromspeakerC = zeros(1,1);
-speaker_LFE_recordings_micC_fromspeakerLS = zeros(1,1);
-speaker_LFE_recordings_micC_fromspeakerRS = zeros(1,1);
-speaker_LFE_recordings_micC_fromspeakerLFE = zeros(1,1);
+speaker_LFE_recordings_micC_fromspeakerL = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micC_fromspeakerR = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micC_fromspeakerC = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micC_fromspeakerLS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micC_fromspeakerRS = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
+speaker_LFE_recordings_micC_fromspeakerLFE = zeros(size(recordedAudio(startPoints(LFE) : endPoints(LFE), MIC9)));
 
 
 % Mics from speaker 5 (LS)
@@ -493,24 +508,68 @@ speakerData(6).microphones(3).recordings(6).recording = speaker_RS_recordings_mi
 
 
 %% Fifth:  process the recordings to obtain the IRs (deconvolution) and corresponding time delay.
+tic
 
+% subplot(2,1,1)
+% plot(referenceRecording)
+% xlabel('reference recording');
+% subplot(2,1,2)
+% plot(mlsSignal)
+% xlabel('mls signal')
+% pause
+
+
+disp('  > Computing reference (Loop) IR.');
 referenceIR = computeIRFromMLS(mlsSignal, referenceRecording');
 
+% plot(referenceIR)
+% xlabel('reference ir')
+% pause
+
+disp(sprintf('  > Computing IR 00 of 00 [...]'));
+currentIteration = 1;
 for currentReceivingSpeakerIndex = 1 : 6
     for currentMicIndex = 1 : 3
         for currentTransmittingSpeakerIndex = 1 : 3
 
+            disp(sprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b %.2d of %.2d [...]', currentIteration, 6 * 3 * 3));
+            currentIteration = currentIteration + 1;
+
             % Computes the IR
+            disp(sprintf('\b\b\b\b\b\b[#..]'));
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR = ...
                 computeIRFromMLS(mlsSignal, speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording');
 
+%             close all
+%             subplot(2,1,1)
+%             plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording');
+%             xlabel('Input signal')
+%             subplot(2,1,2)
+%             plot(referenceRecording)
+%             xlabel('Reference recording');
+%             pause
+
+%             subplot(2,1,1)
+%             plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR);
+%             xlabel('speaker ir');
+%             subplot(2,1,2)
+%             plot(referenceIR);
+%             xlabel('reference ir');
+% 
+%             size(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
+%             size(referenceIR)
+%             pause
+%             
+
             % Corrects the IR with the reference IR
+            disp(sprintf('\b\b\b\b\b\b[##.]'));
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR = ...
                 compensateIRWithReference( ...
-                    speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR, ...
-                    referenceIR);
+                    referenceIR, ...
+                    speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR);
 
             % Find out associated delay time for each IR
+            disp(sprintf('\b\b\b\b\b\b[###]'));
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).estimatedTime = ...
                 estimateDelay( ...
                     speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR, ...
@@ -521,6 +580,8 @@ for currentReceivingSpeakerIndex = 1 : 6
 end
 
     outputData = speakerData;
+    elapsedTime = toc;
+    disp(sprintf('  > All IR computations done. Elapsed time: %d:%d [mm:ss]', floor(elapsedTime/60), round(elapsedTime - floor(elapsedTime/60)*60) ));
 end
 
 
