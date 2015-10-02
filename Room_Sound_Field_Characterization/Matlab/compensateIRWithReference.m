@@ -5,6 +5,16 @@ function correctedID = compensateIRWithReference(measuredIR, referenceIR)
     %
     %  Joe.
 
+    if length(measuredIR) ~= length(referenceIR)
+        if length(measuredIR) > length(referenceIR)
+            % Pad the reference with zeros
+            referenceIR = [referenceIR , zeros(1, length(measuredIR) - length(referenceIR))];
+        else
+            % Pad the measured IR
+            measuredIR = [measuredIR , zeros(1, length(referenceIR) - length(measuredIR))];
+        end
+    end
+    
     fft_signal = fft(measuredIR);
     fft_reference = fft(referenceIR);
 

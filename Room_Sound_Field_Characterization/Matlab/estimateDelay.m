@@ -1,4 +1,4 @@
-function est_delay = estimateDelay(inputIR, fs)
+function [est_delay, samples_delay] = estimateDelay(inputIR, fs)
 %%This function returns the delay in time from a speaker to a microphone
 % Inputs: IR of which delay is wanted
 %       : The sampling frequency
@@ -9,5 +9,5 @@ function est_delay = estimateDelay(inputIR, fs)
 
 % Convert from samples to time
 est_delay = 1/fs * I;
-
+samples_delay = I;
 end

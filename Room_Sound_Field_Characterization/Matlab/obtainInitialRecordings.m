@@ -8,9 +8,12 @@ disp(sprintf('<[ INITIAL SETUP MEASUREMENTS ]>\n'));
 
 %% Constants definitions
 SAMPLING_FREQ = 44100;
-INITIAL_DELAY_SAMPLES = 100;
-MLS_SIGNAL_ORDER = 10;
-MLS_GUARD_TIME = 0.1; % Note: this should come from a pre-test to find out
+INITIAL_DELAY_SAMPLES = 2000;
+FINAL_RECORDING_MARGIN_SAMPLES = 5000;
+PRE_IR_MARGIN_SAMPLES = 300;
+MLS_SIGNAL_ORDER = 13;
+MLS_GUARD_TIME = round(2^MLS_SIGNAL_ORDER * 1.2 / SAMPLING_FREQ);
+                      % Note: this should come from a pre-test to find out
                       %       how big is the room, and therefore how long
                       %       this guard-time has to be.
 
@@ -33,7 +36,7 @@ initialDelayZeros = zeros(INITIAL_DELAY_SAMPLES, size(excitationSignal, 2));
 excitationSignal = [initialDelayZeros; excitationSignal];
 
 % Play the generated signals and record all microphones (and loop)
-recordedAudio = playAndRecord(excitationSignal, length(excitationSignal), SAMPLING_FREQ);
+recordedAudio = playAndRecord(excitationSignal, length(excitationSignal) + FINAL_RECORDING_MARGIN_SAMPLES, SAMPLING_FREQ);
 
 
 % for i = 1:16
@@ -43,25 +46,75 @@ recordedAudio = playAndRecord(excitationSignal, length(excitationSignal), SAMPLI
 %     xlabel(sprintf('Channel %d', i));
 % end
 
+% Extracts the recording for the loop IR
+middlePoint = round(length(recordedAudio(:,16)) * 0.5);
+referencePlaying = excitationSignal(middlePoint : length(excitationSignal(:,7)), 7);
+referenceRecording = recordedAudio(middlePoint : length(recordedAudio(:, 16)), 16);
+
+% Compute the loop IR and find the delay inserted by the system
+referenceIR = computeIRFromMLS(referenceRecording', referencePlaying');
+[~, hardwareLatencySamples] = estimateDelay(referenceIR, 1);
+
+% Trims the reference IR tail
+referenceIR = referenceIR(1 : hardwareLatencySamples + 500);
+
+% Introduces the pre-margin for the IR also in the reference. The reason
+% for this margin is to allow the IR to have a "soft rise".
+referenceIR = [zeros(1, PRE_IR_MARGIN_SAMPLES) , referenceIR];
+
+% Substract this delay from all recordings
+recordedAudio = recordedAudio(hardwareLatencySamples - PRE_IR_MARGIN_SAMPLES : length(recordedAudio), :);
+
+% 
+% subplot(2,1,1)
+% plot(referenceRecording, 'g')
+% hold on
+% plot(referencePlaying, 'r')
+% 
+% subplot(2,1,2)
+% plot(referenceIR)
+% 
+% return
+
+
+
+
+
+
+
+
+
 tempLine = zeros(length(recordedAudio), 1);
+tempLineEnds = zeros(length(recordedAudio), 1);
+
 
 % Find cut limits for the recorded signals
 startPoints = zeros(7, 1);
 endPoints = zeros(7, 1);
 for i = 1:7
-    %currentStartPoint = ((i-1) * ceil(size(recordedAudio, 1) /7)) + 1;
-    currentStartPoint = (i-1) * (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ)) + 1;
-    currentEndPoint = (i * ceil(size(recordedAudio, 1) /7)) -2;
+    currentStartPoint = (i-1) * (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ)) + 1 + INITIAL_DELAY_SAMPLES - PRE_IR_MARGIN_SAMPLES;
+    currentEndPoint = currentStartPoint + (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ));
     startPoints(i) = currentStartPoint;
-    
+
     if currentEndPoint > length(recordedAudio)
         endPoints(i) = length(recordedAudio);
     else
         endPoints(i) = currentEndPoint;
     end
-    
+
     tempLine(currentStartPoint) = 1;
+    tempLineEnds(currentEndPoint) = 1;
 end
+
+
+% 
+% plot(recordedAudio)
+% hold on
+% plot(tempLine, 'g')
+% plot(tempLineEnds, 'r')
+% return
+
+
 
 
 %% Third:  play the generated signal and record all 16 channels. 
@@ -74,10 +127,11 @@ MIC14 = 14; MIC15 = 15; LOOPIN = 16; L = 1; R = 2; C = 3; LFE = 4;
 LS = 5; RS = 6; LOOPOUT = 7;
 
 % Loop signal for IR compensation
-referenceRecording = recordedAudio(startPoints(LOOPOUT) : endPoints(LOOPOUT), LOOPIN);
+%referenceRecording = recordedAudio(startPoints(LOOPOUT) : endPoints(LOOPOUT), LOOPIN);
 
 
 % Mics from speaker 1 (L)
+
 
 speaker_L_recordings_micA_fromspeakerL = recordedAudio(startPoints(L) : endPoints(L), MIC1);
 speaker_L_recordings_micA_fromspeakerR = recordedAudio(startPoints(R) : endPoints(R), MIC1);
@@ -520,25 +574,47 @@ tic
 
 
 disp('  > Computing reference (Loop) IR.');
-referenceIR = computeIRFromMLS(mlsSignal, referenceRecording');
+%referenceIR = computeIRFromMLS(mlsSignal, referenceRecording');
 
 % plot(referenceIR)
 % xlabel('reference ir')
 % pause
 
-disp(sprintf('  > Computing IR 00 of 00 [...]'));
+disp(sprintf('  > Computing IR 000 of 000 [...]'));
 currentIteration = 1;
 for currentReceivingSpeakerIndex = 1 : 6
     for currentMicIndex = 1 : 3
-        for currentTransmittingSpeakerIndex = 1 : 3
+        for currentTransmittingSpeakerIndex = 1 : 6
 
-            disp(sprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b %.2d of %.2d [...]', currentIteration, 6 * 3 * 3));
+            disp(sprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b %.3d of %.3d [...]', currentIteration, 6 * 3 * 6));
             currentIteration = currentIteration + 1;
+
+
+
+%             close all
+%             subplot(2,1,1)
+%             plot( speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording)
+%             subplot(2,1,2)
+%             plot(referenceRecording)
+%             pause
 
             % Computes the IR
             disp(sprintf('\b\b\b\b\b\b[#..]'));
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR = ...
-                computeIRFromMLS(mlsSignal, speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording');
+                computeIRFromMLS( ...
+                    speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording', ...
+                    mlsSignal);
+
+            close all
+            subplot(3,1,1)
+            plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
+            xlabel('Before correction')
+                
+%                plot(mlsSignal, 'g')
+%                hold on
+%                plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording', 'r')
+%                pause
+
 
 %             close all
 %             subplot(2,1,1)
@@ -561,12 +637,40 @@ for currentReceivingSpeakerIndex = 1 : 6
 %             pause
 %             
 
+%             close all
+%             plot(referenceIR, 'g')
+%             hold on
+%             plot([zeros(1, hardwareLatencySamples - PRE_IR_MARGIN_SAMPLES), speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR])
+%             pause
+
             % Corrects the IR with the reference IR
             disp(sprintf('\b\b\b\b\b\b[##.]'));
             speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR = ...
                 compensateIRWithReference( ...
-                    referenceIR, ...
-                    speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR);
+                    [zeros(1, hardwareLatencySamples - PRE_IR_MARGIN_SAMPLES), speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR], ...
+                    referenceIR);
+
+% 
+% 
+%             close all
+%             plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
+%             xlabel('after correction')
+%             pause
+% 
+% 
+%             close all
+%             spectrum = abs(fft(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR(1:100)));
+%             semilogx(20*log10(spectrum));
+%             pause
+            
+                
+%             subplot(3,1,2)
+%             plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
+%             xlabel('after correction')
+%             subplot(3,1,3)
+%             plot(referenceIR)
+%             xlabel('reference ir')
+%             pause
 
             % Find out associated delay time for each IR
             disp(sprintf('\b\b\b\b\b\b[###]'));
