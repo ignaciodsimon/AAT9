@@ -3,6 +3,7 @@ function est_delay = estimateDelay(inputIR, fs)
 % Inputs: IR of which delay is wanted
 %       : The sampling frequency
 % Output: The delay in time
+%Christian Jøns, AAT9.
 
 % Get the row which have the maximum
 [~, I] = max(inputIR);
