@@ -7,15 +7,16 @@ addpath('multichannel_lib', 'classes');
 disp(sprintf('<[ INITIAL SETUP MEASUREMENTS ]>\n'));
 
 %% Constants definitions
-SAMPLING_FREQ = 44100;
+SAMPLING_FREQ = 48000;
 INITIAL_DELAY_SAMPLES = 2000;
 FINAL_RECORDING_MARGIN_SAMPLES = 5000;
 PRE_IR_MARGIN_SAMPLES = 300;
 MLS_SIGNAL_ORDER = 13;
-MLS_GUARD_TIME = round(2^MLS_SIGNAL_ORDER * 1.2 / SAMPLING_FREQ);
+MLS_GUARD_TIME = 2^MLS_SIGNAL_ORDER * 0.5 / SAMPLING_FREQ;
                       % Note: this should come from a pre-test to find out
                       %       how big is the room, and therefore how long
                       %       this guard-time has to be.
+REF_SIGNAL_TRIM_MARGIN = 400;
 
 %% First:  generate the pattern signal (MLS).
 disp('  > Generating excitation signals.');
@@ -47,9 +48,50 @@ recordedAudio = playAndRecord(excitationSignal, length(excitationSignal) + FINAL
 % end
 
 % Extracts the recording for the loop IR
+
+% Cuts the first half part of reference playing / recording
 middlePoint = round(length(recordedAudio(:,16)) * 0.5);
 referencePlaying = excitationSignal(middlePoint : length(excitationSignal(:,7)), 7);
 referenceRecording = recordedAudio(middlePoint : length(recordedAudio(:, 16)), 16);
+
+% Finds a reasonable starting point to trim reference playing / recording
+peakValueRefPlaying = max(abs(referencePlaying));
+peakValueRefPlaying = max(abs(referenceRecording));
+
+% Start point on the reference playing signal
+for i = 1 : length(referencePlaying)
+    if abs(referencePlaying(i)) >= peakValueRefPlaying / 2
+        break
+    end
+end
+
+if i-200 >= 1
+    refSignalStartPoint = i - REF_SIGNAL_TRIM_MARGIN;
+else
+    refSignalStartPoint = 1;
+end
+
+% Stop point on the reference playing signal
+for i = 1 : length(referenceRecording)
+    if abs(referenceRecording(length(referenceRecording) - i)) >= peakValueRefPlaying / 2
+        break
+    end
+end
+
+if length(referenceRecording) - i + REF_SIGNAL_TRIM_MARGIN <= length(referenceRecording)
+    refSignalEndPoint = length(referenceRecording) - i + REF_SIGNAL_TRIM_MARGIN;
+else
+    refSignalEndPoint = length(referenceRecording);
+end
+
+referencePlaying = referencePlaying(refSignalStartPoint : refSignalEndPoint);
+referenceRecording = referenceRecording(refSignalStartPoint : refSignalEndPoint);
+
+% subplot(2,1,1)
+% plot(referencePlaying)
+% subplot(2,1,2)
+% plot(referenceRecording)
+% pause
 
 % Compute the loop IR and find the delay inserted by the system
 referenceIR = computeIRFromMLS(referenceRecording', referencePlaying');
@@ -92,7 +134,7 @@ tempLineEnds = zeros(length(recordedAudio), 1);
 startPoints = zeros(7, 1);
 endPoints = zeros(7, 1);
 for i = 1:7
-    currentStartPoint = (i-1) * (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ)) + 1 + INITIAL_DELAY_SAMPLES - PRE_IR_MARGIN_SAMPLES;
+    currentStartPoint = (i-1) * (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ)) + 2 + INITIAL_DELAY_SAMPLES - PRE_IR_MARGIN_SAMPLES;
     currentEndPoint = currentStartPoint + (length(mlsSignal) + ceil(MLS_GUARD_TIME * SAMPLING_FREQ));
     startPoints(i) = currentStartPoint;
 
@@ -589,13 +631,16 @@ for currentReceivingSpeakerIndex = 1 : 6
             disp(sprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b %.3d of %.3d [...]', currentIteration, 6 * 3 * 6));
             currentIteration = currentIteration + 1;
 
-
-
 %             close all
-%             subplot(2,1,1)
+%             subplot(3,1,1)
 %             plot( speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording)
-%             subplot(2,1,2)
+%             xlabel('Received recording')
+%             subplot(3,1,2)
 %             plot(referenceRecording)
+%             xlabel('reference recording')
+%             subplot(3,1,3)
+%             plot(mlsSignal)
+%             xlabel('mls signal')
 %             pause
 
             % Computes the IR
