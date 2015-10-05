@@ -20,15 +20,15 @@ function computedIR = computeIRFromMLS(usedMLS, recordedSignal)
     b = b / nb;
 
     % Circular cross-correlation
-    [~, c] = cxcorr(a, b);
+    %[~, c] = cxcorr(a, b);
 
     % This is equivalent to the matlab "cxcorr()" function
-    %     c = zeros(size(a));
-    %     for k = 1 : length(b)
-    %         c(k) = a * b';
-    %         % Circular shift
-    %         b = [b(end), b(1:end-1)];
-    %     end
+    c = zeros(size(a));
+    for k = 1 : length(b)
+        c(k) = a * b';
+        % Circular shift
+        b = [b(end), b(1:end-1)];
+    end
 
     computedIR = c;
 

@@ -8,10 +8,14 @@
 initialData = obtainInitialRecordings();
 
 
-% 2 - Estimate time delays from recordings
+% 2 - Show results
+plotRecordings(initialData);
+
+
+% 3 - Estimate time delays from recordings
 
 
 
-% 3 - Estimate positions from time delays
+% 4 - Estimate positions from time delays
 
 

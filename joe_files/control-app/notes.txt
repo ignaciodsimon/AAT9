@@ -1,0 +1,4 @@
+
+Read some example code for the joystick from here:
+
+https://scaryreasoner.wordpress.com/2008/02/22/programming-joysticks-with-linux/
