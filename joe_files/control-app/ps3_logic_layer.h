@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 
-#ifndef __PS3_CONTROL_LAYER_H_
-#define __PS3_CONTROL_LAYER_H_
+#ifndef __PS3_LOGIC_LAYER_H_
+#define __PS3_LOGIC_LAYER_H_
 
 
 // ---------------- CONSTANTS DEFINITIONS ----------------

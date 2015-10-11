@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "joystick.h"
-#include "ps3_control_layer.h"
+#include "ps3_logic_layer.h"
 
 // ---------------- PRIVATE VARIABLES ----------------
 

@@ -6,8 +6,8 @@
 
 input_range_max = 32767;
 input_range_min = -32767;
-output_range_max = 100;
-output_range_min = -100;
+output_range_max = 10;
+output_range_min = -10;
 
 
 def convertData(inputData):
@@ -33,4 +33,4 @@ if __name__ == "__main__":
 
     print ' >> Test: adapting the data range from the controller.'
     print 'Input data: ', input_data
-    print 'Converted data: ', convertData(input_data)
+    print 'Converted data: %.1f' % (convertData(input_data))
