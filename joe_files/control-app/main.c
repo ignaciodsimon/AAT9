@@ -1,70 +1,52 @@
 #include "stdio.h"
-#include "joystick.h"
+#include "ps3_control_layer.h"
 
-#define BUTTON_SELECT 0
-#define BUTTON_START 3
-#define BUTTON_CROSS 18
-#define BUTTON_SQUARE 19
-#define BUTTON_CIRCLE 17
-#define BUTTON_TRIANGLE 16
-#define BUTTON_L1 14
-#define BUTTON_L2 12
-#define BUTTON_R1 15
-#define BUTTON_R2 13
-#define BUTTON_LEFT 11
-#define BUTTON_RIGHT 9
-#define BUTTON_UP 8
-#define BUTTON_DOWN 10
-
-
-void waitForKey(struct js_event eventStruct, int keyNumber)
+int main(void)
 {
+    TPS3ReadAction * returnedData;
+    int setOfKeys1[4];
+    setOfKeys1[0] = PS3_BUTTON_LEFT;
+    setOfKeys1[1] = PS3_BUTTON_RIGHT;
+    setOfKeys1[2] = PS3_BUTTON_UP;
+    setOfKeys1[3] = PS3_BUTTON_DOWN;
 
-}
+    printf("\n>> PS3 Controller - Test program <<\n\n");
 
+    // Open the joystick
+    if (!openController())
+    {
+        printf("ERROR: Could not open the controller!\n");
+        return -1;
+    }
+    printf("Controller ready.\n");
 
+    // Waits for the Start button
+    printf("\n >> Press <START> ...\n");
+    waitForKey(PS3_BUTTON_START, returnedData);
+    if (returnedData != NULL)
+        printf("Read: %.1f\n", returnedData->readValue);
+    else
+        printf("Received NULL!\n");
 
-int main(int argc, char *argv[])
-{
-	int js_fileDescriptor, js_readEvent;
-	struct js_event js_eventStruct;
+    // Waits for the cross (X)
+    printf("\n >> Press (X) ...\n");
+    waitForKey(PS3_BUTTON_CROSS, returnedData);
+    if (returnedData != NULL)
+        printf("Read: %.1f\n", returnedData->readValue);
+    else
+        printf("Received NULL!\n");
 
-	int x_pos = 0, y_pos = 0;
-
-	printf(" <[ CAR REMOTE CONTROL PROGRAM ]>\n\n");
-	printf(" > Initializing.\n");
-
-	printf(" > Accessing joystick.\n");
-	if ((js_fileDescriptor = open_joystick(NULL)) < 0)
-	{
-		printf("ERROR: Could not access the joystick! Terminating.\n");
-		return 1;
-	}
-
-	printf(" > Ready, receiving orders ... ");
-
-	while (1)
-	{
-		js_readEvent = read_joystick_event(&js_eventStruct);
-
-		usleep(5000);
-		if (js_readEvent == 1 && (js_eventStruct.number == 0 || js_eventStruct.number == 1))
-		{
-			switch (js_eventStruct.number)
-			{
-				case 0:
-					x_pos = js_eventStruct.value;
-					break;
-				case 1:
-					y_pos = js_eventStruct.value;
-					break;
-
-			}
-//			printf("Event: time %8u, value %8hd, type: %3u, axis/button: %u\n", 
-//				js_event.time, js_event.value, js_event.type, js_event.number);
-			printf("[%d - %d]\n", x_pos, y_pos);
-		}
-	}
+    // Wait for several keys (a couple of times)
+    printf("\n >> Press ANY arrow ...\n");
+    waitForKeys(4, setOfKeys1, returnedData);
+    if (returnedData != NULL)
+        printf("Read: %.1f\n", returnedData->readValue);
+    else
+        printf("Received NULL!\n");
+    
+    // Wait for axis
+    //
+    // Test this part if the controller differs
 
 	return 0;
 }
