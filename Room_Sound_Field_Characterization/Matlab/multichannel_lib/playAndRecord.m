@@ -14,7 +14,7 @@ function recordedAudio = playAndRecord(audioToPlay, recordDuration, sampleRate)
     recDeviceType = 'asio';
 
     % Recording channels
-    firstRecChannelIndex = 5;
+    firstRecChannelIndex = 1;
     lastRecChannelIndex = 24;
 
     % Performs the recording while playing the output signal
@@ -22,5 +22,4 @@ function recordedAudio = playAndRecord(audioToPlay, recordDuration, sampleRate)
         sampleRate, recordDuration, firstRecChannelIndex, ...
         lastRecChannelIndex, recDeviceID, recDeviceType);
 
-    recordedAudio = [recordedAudio(:, 1:8), recordedAudio(:,13:20)];
 end

@@ -62,6 +62,7 @@ function plotRecordings(inputData)
                         plotTitle = 'Received at: Speaker RS';
                     otherwise
                         plotTitle = '--Unknown receiving speaker--';
+                        disp('ERROR: wrong receiving speaker ID!');
                 end
 
                 subplot(3, 2, receivingSpeaker);
