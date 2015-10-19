@@ -39,15 +39,19 @@ excitationSignal = [initialDelayZeros; excitationSignal];
 % Play the generated signals and record all microphones (and loop)
 recordedAudio = playAndRecord(excitationSignal, length(excitationSignal) + FINAL_RECORDING_MARGIN_SAMPLES, SAMPLING_FREQ);
 
+% Save recorded audios to wav file
+filenameEnding = strrep(input(sprintf('\n <> Insert filename to save recordings to: '), 's'), ' ', '_');
+disp(sprintf('  > Saving recordings and excitation signal to wav files.'));
+audiowrite(strcat(filenameEnding, '_excitation_signal.wav'), excitationSignal, SAMPLING_FREQ);
+audiowrite(strcat(filenameEnding, '_recorded_audios.wav'), recordedAudio, SAMPLING_FREQ);
 
-% for i = 1:16
-%     subplot(8, 2, i);
-%     plot(recordedAudio(:,i));
-%     ylim([-0.3 0.3]);
-%     xlabel(sprintf('Channel %d', i));
-% end
+% Extracts only the 16 channels of mics + loop
+recordedAudio = [recordedAudio(:, 5:12), recordedAudio(:, 17:24)];
 
-% Extracts the recording for the loop IR
+
+%% Extracts the recording for the loop IR
+
+disp(sprintf('  > Computing reference-loop IR for compensation.'));
 
 % Cuts the first half part of reference playing / recording
 middlePoint = round(length(recordedAudio(:,16)) * 0.5);
@@ -119,12 +123,9 @@ recordedAudio = recordedAudio(hardwareLatencySamples - PRE_IR_MARGIN_SAMPLES : l
 % return
 
 
+%% Find the cuts and separate recordings in pieces
 
-
-
-
-
-
+disp(sprintf('  > Splitting recordings.'));
 
 tempLine = zeros(length(recordedAudio), 1);
 tempLineEnds = zeros(length(recordedAudio), 1);
@@ -149,18 +150,12 @@ for i = 1:7
 end
 
 
-% 
+
 % plot(recordedAudio)
 % hold on
 % plot(tempLine, 'g')
 % plot(tempLineEnds, 'r')
 % return
-
-
-
-
-%% Third:  play the generated signal and record all 16 channels. 
-disp(sprintf('\n  > Splitting recordings.'));
 
 % Constants for simplifying the code below
 MIC1 = 1; MIC2 = 2; MIC3 = 3; MIC4 = 4; MIC5 = 5; MIC6 = 6; MIC7 = 7;
@@ -173,7 +168,6 @@ LS = 5; RS = 6; LOOPOUT = 7;
 
 
 % Mics from speaker 1 (L)
-
 
 speaker_L_recordings_micA_fromspeakerL = recordedAudio(startPoints(L) : endPoints(L), MIC1);
 speaker_L_recordings_micA_fromspeakerR = recordedAudio(startPoints(R) : endPoints(R), MIC1);
@@ -330,12 +324,12 @@ speakerData(1).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(1).microphones(1).recordings(2).recording = speaker_L_recordings_micA_fromspeakerR;
 speakerData(1).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(1).microphones(1).recordings(3).recording = speaker_L_recordings_micA_fromspeakerC;
-speakerData(1).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(1).microphones(1).recordings(4).recording = speaker_L_recordings_micA_fromspeakerLS;
 speakerData(1).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(1).microphones(1).recordings(5).recording = speaker_L_recordings_micA_fromspeakerRS;
+speakerData(1).microphones(1).recordings(5).recording = speaker_L_recordings_micA_fromspeakerLS;
 speakerData(1).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(1).microphones(1).recordings(6).recording = speaker_L_recordings_micA_fromspeakerLFE;
+speakerData(1).microphones(1).recordings(6).recording = speaker_L_recordings_micA_fromspeakerRS;
+speakerData(1).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(1).microphones(1).recordings(4).recording = speaker_L_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 1 (L)
 speakerData(1).microphones(2).id = 2;
@@ -345,12 +339,12 @@ speakerData(1).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(1).microphones(2).recordings(2).recording = speaker_L_recordings_micB_fromspeakerR;
 speakerData(1).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(1).microphones(2).recordings(3).recording = speaker_L_recordings_micB_fromspeakerC;
-speakerData(1).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(1).microphones(2).recordings(4).recording = speaker_L_recordings_micB_fromspeakerLS;
 speakerData(1).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(1).microphones(2).recordings(5).recording = speaker_L_recordings_micB_fromspeakerRS;
+speakerData(1).microphones(2).recordings(5).recording = speaker_L_recordings_micB_fromspeakerLS;
 speakerData(1).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(1).microphones(2).recordings(6).recording = speaker_L_recordings_micB_fromspeakerLFE;
+speakerData(1).microphones(2).recordings(6).recording = speaker_L_recordings_micB_fromspeakerRS;
+speakerData(1).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(1).microphones(2).recordings(4).recording = speaker_L_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 1 (L)
 speakerData(1).microphones(3).id = 3;
@@ -360,12 +354,12 @@ speakerData(1).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(1).microphones(3).recordings(2).recording = speaker_L_recordings_micC_fromspeakerR;
 speakerData(1).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(1).microphones(3).recordings(3).recording = speaker_L_recordings_micC_fromspeakerC;
-speakerData(1).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(1).microphones(3).recordings(4).recording = speaker_L_recordings_micC_fromspeakerLS;
 speakerData(1).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(1).microphones(3).recordings(5).recording = speaker_L_recordings_micC_fromspeakerRS;
+speakerData(1).microphones(3).recordings(5).recording = speaker_L_recordings_micC_fromspeakerLS;
 speakerData(1).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(1).microphones(3).recordings(6).recording = speaker_L_recordings_micC_fromspeakerLFE;
+speakerData(1).microphones(3).recordings(6).recording = speaker_L_recordings_micC_fromspeakerRS;
+speakerData(1).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(1).microphones(3).recordings(4).recording = speaker_L_recordings_micC_fromspeakerLFE;
 
 
 % Mic 1(A) from Speaker 2 (R)
@@ -377,12 +371,12 @@ speakerData(2).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(2).microphones(1).recordings(2).recording = speaker_R_recordings_micA_fromspeakerR;
 speakerData(2).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(2).microphones(1).recordings(3).recording = speaker_R_recordings_micA_fromspeakerC;
-speakerData(2).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(2).microphones(1).recordings(4).recording = speaker_R_recordings_micA_fromspeakerLS;
 speakerData(2).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(2).microphones(1).recordings(5).recording = speaker_R_recordings_micA_fromspeakerRS;
+speakerData(2).microphones(1).recordings(5).recording = speaker_R_recordings_micA_fromspeakerLS;
 speakerData(2).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(2).microphones(1).recordings(6).recording = speaker_R_recordings_micA_fromspeakerLFE;
+speakerData(2).microphones(1).recordings(6).recording = speaker_R_recordings_micA_fromspeakerRS;
+speakerData(2).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(2).microphones(1).recordings(4).recording = speaker_R_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 2 (R)
 speakerData(2).microphones(2).id = 2;
@@ -392,12 +386,12 @@ speakerData(2).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(2).microphones(2).recordings(2).recording = speaker_R_recordings_micB_fromspeakerR;
 speakerData(2).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(2).microphones(2).recordings(3).recording = speaker_R_recordings_micB_fromspeakerC;
-speakerData(2).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(2).microphones(2).recordings(4).recording = speaker_R_recordings_micB_fromspeakerLS;
 speakerData(2).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(2).microphones(2).recordings(5).recording = speaker_R_recordings_micB_fromspeakerRS;
+speakerData(2).microphones(2).recordings(5).recording = speaker_R_recordings_micB_fromspeakerLS;
 speakerData(2).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(2).microphones(2).recordings(6).recording = speaker_R_recordings_micB_fromspeakerLFE;
+speakerData(2).microphones(2).recordings(6).recording = speaker_R_recordings_micB_fromspeakerRS;
+speakerData(2).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(2).microphones(2).recordings(4).recording = speaker_R_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 2 (R)
 speakerData(2).microphones(3).id = 3;
@@ -407,12 +401,12 @@ speakerData(2).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(2).microphones(3).recordings(2).recording = speaker_R_recordings_micC_fromspeakerR;
 speakerData(2).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(2).microphones(3).recordings(3).recording = speaker_R_recordings_micC_fromspeakerC;
-speakerData(2).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(2).microphones(3).recordings(4).recording = speaker_R_recordings_micC_fromspeakerLS;
 speakerData(2).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(2).microphones(3).recordings(5).recording = speaker_R_recordings_micC_fromspeakerRS;
+speakerData(2).microphones(3).recordings(5).recording = speaker_R_recordings_micC_fromspeakerLS;
 speakerData(2).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(2).microphones(3).recordings(6).recording = speaker_R_recordings_micC_fromspeakerLFE;
+speakerData(2).microphones(3).recordings(6).recording = speaker_R_recordings_micC_fromspeakerRS;
+speakerData(2).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(2).microphones(3).recordings(4).recording = speaker_R_recordings_micC_fromspeakerLFE;
 
 
 % Mic 1(A) from Speaker 3 (C)
@@ -424,12 +418,12 @@ speakerData(3).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(3).microphones(1).recordings(2).recording = speaker_C_recordings_micA_fromspeakerR;
 speakerData(3).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(3).microphones(1).recordings(3).recording = speaker_C_recordings_micA_fromspeakerC;
-speakerData(3).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(3).microphones(1).recordings(4).recording = speaker_C_recordings_micA_fromspeakerLS;
 speakerData(3).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(3).microphones(1).recordings(5).recording = speaker_C_recordings_micA_fromspeakerRS;
+speakerData(3).microphones(1).recordings(5).recording = speaker_C_recordings_micA_fromspeakerLS;
 speakerData(3).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(3).microphones(1).recordings(6).recording = speaker_C_recordings_micA_fromspeakerLFE;
+speakerData(3).microphones(1).recordings(6).recording = speaker_C_recordings_micA_fromspeakerRS;
+speakerData(3).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(3).microphones(1).recordings(4).recording = speaker_C_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 3 (C)
 speakerData(3).microphones(2).id = 2;
@@ -439,12 +433,12 @@ speakerData(3).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(3).microphones(2).recordings(2).recording = speaker_C_recordings_micB_fromspeakerR;
 speakerData(3).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(3).microphones(2).recordings(3).recording = speaker_C_recordings_micB_fromspeakerC;
-speakerData(3).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(3).microphones(2).recordings(4).recording = speaker_C_recordings_micB_fromspeakerLS;
 speakerData(3).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(3).microphones(2).recordings(5).recording = speaker_C_recordings_micB_fromspeakerRS;
+speakerData(3).microphones(2).recordings(5).recording = speaker_C_recordings_micB_fromspeakerLS;
 speakerData(3).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(3).microphones(2).recordings(6).recording = speaker_C_recordings_micB_fromspeakerLFE;
+speakerData(3).microphones(2).recordings(6).recording = speaker_C_recordings_micB_fromspeakerRS;
+speakerData(3).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(3).microphones(2).recordings(4).recording = speaker_C_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 3 (C)
 speakerData(3).microphones(3).id = 3;
@@ -454,12 +448,12 @@ speakerData(3).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(3).microphones(3).recordings(2).recording = speaker_C_recordings_micC_fromspeakerR;
 speakerData(3).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(3).microphones(3).recordings(3).recording = speaker_C_recordings_micC_fromspeakerC;
-speakerData(3).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(3).microphones(3).recordings(4).recording = speaker_C_recordings_micC_fromspeakerLS;
 speakerData(3).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(3).microphones(3).recordings(5).recording = speaker_C_recordings_micC_fromspeakerRS;
+speakerData(3).microphones(3).recordings(5).recording = speaker_C_recordings_micC_fromspeakerLS;
 speakerData(3).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(3).microphones(3).recordings(6).recording = speaker_C_recordings_micC_fromspeakerLFE;
+speakerData(3).microphones(3).recordings(6).recording = speaker_C_recordings_micC_fromspeakerRS;
+speakerData(3).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(3).microphones(3).recordings(4).recording = speaker_C_recordings_micC_fromspeakerLFE;
 
 
 % Mic 1(A) from Speaker 4 (LFE)
@@ -471,12 +465,12 @@ speakerData(4).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(4).microphones(1).recordings(2).recording = speaker_LFE_recordings_micA_fromspeakerR;
 speakerData(4).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(4).microphones(1).recordings(3).recording = speaker_LFE_recordings_micA_fromspeakerC;
-speakerData(4).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(4).microphones(1).recordings(4).recording = speaker_LFE_recordings_micA_fromspeakerLS;
 speakerData(4).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(4).microphones(1).recordings(5).recording = speaker_LFE_recordings_micA_fromspeakerRS;
+speakerData(4).microphones(1).recordings(5).recording = speaker_LFE_recordings_micA_fromspeakerLS;
 speakerData(4).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(4).microphones(1).recordings(6).recording = speaker_LFE_recordings_micA_fromspeakerLFE;
+speakerData(4).microphones(1).recordings(6).recording = speaker_LFE_recordings_micA_fromspeakerRS;
+speakerData(4).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(4).microphones(1).recordings(4).recording = speaker_LFE_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 4 (LFE)
 speakerData(4).microphones(2).id = 2;
@@ -486,12 +480,12 @@ speakerData(4).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(4).microphones(2).recordings(2).recording = speaker_LFE_recordings_micB_fromspeakerR;
 speakerData(4).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(4).microphones(2).recordings(3).recording = speaker_LFE_recordings_micB_fromspeakerC;
-speakerData(4).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(4).microphones(2).recordings(4).recording = speaker_LFE_recordings_micB_fromspeakerLS;
 speakerData(4).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(4).microphones(2).recordings(5).recording = speaker_LFE_recordings_micB_fromspeakerRS;
+speakerData(4).microphones(2).recordings(5).recording = speaker_LFE_recordings_micB_fromspeakerLS;
 speakerData(4).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(4).microphones(2).recordings(6).recording = speaker_LFE_recordings_micB_fromspeakerLFE;
+speakerData(4).microphones(2).recordings(6).recording = speaker_LFE_recordings_micB_fromspeakerRS;
+speakerData(4).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(4).microphones(2).recordings(4).recording = speaker_LFE_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 4 (LFE)
 speakerData(4).microphones(3).id = 3;
@@ -501,12 +495,12 @@ speakerData(4).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(4).microphones(3).recordings(2).recording = speaker_LFE_recordings_micC_fromspeakerR;
 speakerData(4).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(4).microphones(3).recordings(3).recording = speaker_LFE_recordings_micC_fromspeakerC;
-speakerData(4).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(4).microphones(3).recordings(4).recording = speaker_LFE_recordings_micC_fromspeakerLS;
 speakerData(4).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(4).microphones(3).recordings(5).recording = speaker_LFE_recordings_micC_fromspeakerRS;
+speakerData(4).microphones(3).recordings(5).recording = speaker_LFE_recordings_micC_fromspeakerLS;
 speakerData(4).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(4).microphones(3).recordings(6).recording = speaker_LFE_recordings_micC_fromspeakerLFE;
+speakerData(4).microphones(3).recordings(6).recording = speaker_LFE_recordings_micC_fromspeakerRS;
+speakerData(4).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(4).microphones(3).recordings(4).recording = speaker_LFE_recordings_micC_fromspeakerLFE;
 
 
 % Mic 1(A) from Speaker 5 (LS)
@@ -518,12 +512,12 @@ speakerData(5).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(5).microphones(1).recordings(2).recording = speaker_LS_recordings_micA_fromspeakerR;
 speakerData(5).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(5).microphones(1).recordings(3).recording = speaker_LS_recordings_micA_fromspeakerC;
-speakerData(5).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(5).microphones(1).recordings(4).recording = speaker_LS_recordings_micA_fromspeakerLS;
 speakerData(5).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(5).microphones(1).recordings(5).recording = speaker_LS_recordings_micA_fromspeakerRS;
+speakerData(5).microphones(1).recordings(5).recording = speaker_LS_recordings_micA_fromspeakerLS;
 speakerData(5).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(5).microphones(1).recordings(6).recording = speaker_LS_recordings_micA_fromspeakerLFE;
+speakerData(5).microphones(1).recordings(6).recording = speaker_LS_recordings_micA_fromspeakerRS;
+speakerData(5).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(5).microphones(1).recordings(4).recording = speaker_LS_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 5 (LS)
 speakerData(5).microphones(2).id = 2;
@@ -533,12 +527,12 @@ speakerData(5).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(5).microphones(2).recordings(2).recording = speaker_LS_recordings_micB_fromspeakerR;
 speakerData(5).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(5).microphones(2).recordings(3).recording = speaker_LS_recordings_micB_fromspeakerC;
-speakerData(5).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(5).microphones(2).recordings(4).recording = speaker_LS_recordings_micB_fromspeakerLS;
 speakerData(5).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(5).microphones(2).recordings(5).recording = speaker_LS_recordings_micB_fromspeakerRS;
+speakerData(5).microphones(2).recordings(5).recording = speaker_LS_recordings_micB_fromspeakerLS;
 speakerData(5).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(5).microphones(2).recordings(6).recording = speaker_LS_recordings_micB_fromspeakerLFE;
+speakerData(5).microphones(2).recordings(6).recording = speaker_LS_recordings_micB_fromspeakerRS;
+speakerData(5).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(5).microphones(2).recordings(4).recording = speaker_LS_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 5 (LS)
 speakerData(5).microphones(3).id = 3;
@@ -548,12 +542,12 @@ speakerData(5).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(5).microphones(3).recordings(2).recording = speaker_LS_recordings_micC_fromspeakerR;
 speakerData(5).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(5).microphones(3).recordings(3).recording = speaker_LS_recordings_micC_fromspeakerC;
-speakerData(5).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(5).microphones(3).recordings(4).recording = speaker_LS_recordings_micC_fromspeakerLS;
 speakerData(5).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(5).microphones(3).recordings(5).recording = speaker_LS_recordings_micC_fromspeakerLR;
+speakerData(5).microphones(3).recordings(5).recording = speaker_LS_recordings_micC_fromspeakerLS;
 speakerData(5).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(5).microphones(3).recordings(6).recording = speaker_LS_recordings_micC_fromspeakerLFE;
+speakerData(5).microphones(3).recordings(6).recording = speaker_LS_recordings_micC_fromspeakerLR;
+speakerData(5).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(5).microphones(3).recordings(4).recording = speaker_LS_recordings_micC_fromspeakerLFE;
 
 
 % Mic 1(A) from Speaker 6 (RS)
@@ -565,12 +559,12 @@ speakerData(6).microphones(1).recordings(2).fromSpeaker = 2;
 speakerData(6).microphones(1).recordings(2).recording = speaker_RS_recordings_micA_fromspeakerR;
 speakerData(6).microphones(1).recordings(3).fromSpeaker = 3;
 speakerData(6).microphones(1).recordings(3).recording = speaker_RS_recordings_micA_fromspeakerC;
-speakerData(6).microphones(1).recordings(4).fromSpeaker = 4;
-speakerData(6).microphones(1).recordings(4).recording = speaker_RS_recordings_micA_fromspeakerLS;
 speakerData(6).microphones(1).recordings(5).fromSpeaker = 5;
-speakerData(6).microphones(1).recordings(5).recording = speaker_RS_recordings_micA_fromspeakerRS;
+speakerData(6).microphones(1).recordings(5).recording = speaker_RS_recordings_micA_fromspeakerLS;
 speakerData(6).microphones(1).recordings(6).fromSpeaker = 6;
-speakerData(6).microphones(1).recordings(6).recording = speaker_RS_recordings_micA_fromspeakerLFE;
+speakerData(6).microphones(1).recordings(6).recording = speaker_RS_recordings_micA_fromspeakerRS;
+speakerData(6).microphones(1).recordings(4).fromSpeaker = 4;
+speakerData(6).microphones(1).recordings(4).recording = speaker_RS_recordings_micA_fromspeakerLFE;
 
 % Mic 2(B) from Speaker 6 (RS)
 speakerData(6).microphones(2).id = 2;
@@ -580,12 +574,12 @@ speakerData(6).microphones(2).recordings(2).fromSpeaker = 2;
 speakerData(6).microphones(2).recordings(2).recording = speaker_RS_recordings_micB_fromspeakerR;
 speakerData(6).microphones(2).recordings(3).fromSpeaker = 3;
 speakerData(6).microphones(2).recordings(3).recording = speaker_RS_recordings_micB_fromspeakerC;
-speakerData(6).microphones(2).recordings(4).fromSpeaker = 4;
-speakerData(6).microphones(2).recordings(4).recording = speaker_RS_recordings_micB_fromspeakerLS;
 speakerData(6).microphones(2).recordings(5).fromSpeaker = 5;
-speakerData(6).microphones(2).recordings(5).recording = speaker_RS_recordings_micB_fromspeakerRS;
+speakerData(6).microphones(2).recordings(5).recording = speaker_RS_recordings_micB_fromspeakerLS;
 speakerData(6).microphones(2).recordings(6).fromSpeaker = 6;
-speakerData(6).microphones(2).recordings(6).recording = speaker_RS_recordings_micB_fromspeakerLFE;
+speakerData(6).microphones(2).recordings(6).recording = speaker_RS_recordings_micB_fromspeakerRS;
+speakerData(6).microphones(2).recordings(4).fromSpeaker = 4;
+speakerData(6).microphones(2).recordings(4).recording = speaker_RS_recordings_micB_fromspeakerLFE;
 
 % Mic 3(C) from Speaker 6 (RS)
 speakerData(6).microphones(3).id = 3;
@@ -595,12 +589,12 @@ speakerData(6).microphones(3).recordings(2).fromSpeaker = 2;
 speakerData(6).microphones(3).recordings(2).recording = speaker_RS_recordings_micC_fromspeakerR;
 speakerData(6).microphones(3).recordings(3).fromSpeaker = 3;
 speakerData(6).microphones(3).recordings(3).recording = speaker_RS_recordings_micC_fromspeakerC;
-speakerData(6).microphones(3).recordings(4).fromSpeaker = 4;
-speakerData(6).microphones(3).recordings(4).recording = speaker_RS_recordings_micC_fromspeakerLS;
 speakerData(6).microphones(3).recordings(5).fromSpeaker = 5;
-speakerData(6).microphones(3).recordings(5).recording = speaker_RS_recordings_micC_fromspeakerRS;
+speakerData(6).microphones(3).recordings(5).recording = speaker_RS_recordings_micC_fromspeakerLS;
 speakerData(6).microphones(3).recordings(6).fromSpeaker = 6;
-speakerData(6).microphones(3).recordings(6).recording = speaker_RS_recordings_micC_fromspeakerLFE;
+speakerData(6).microphones(3).recordings(6).recording = speaker_RS_recordings_micC_fromspeakerRS;
+speakerData(6).microphones(3).recordings(4).fromSpeaker = 4;
+speakerData(6).microphones(3).recordings(4).recording = speaker_RS_recordings_micC_fromspeakerLFE;
 
 
 %% Fifth:  process the recordings to obtain the IRs (deconvolution) and corresponding time delay.
@@ -615,7 +609,7 @@ tic
 % pause
 
 
-disp('  > Computing reference (Loop) IR.');
+% disp('  > Computing reference (Loop) IR.');
 %referenceIR = computeIRFromMLS(mlsSignal, referenceRecording');
 
 % plot(referenceIR)
@@ -650,10 +644,10 @@ for currentReceivingSpeakerIndex = 1 : 6
                     speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).recording', ...
                     mlsSignal);
 
-            close all
-            subplot(3,1,1)
-            plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
-            xlabel('Before correction')
+%             close all
+%             subplot(3,1,1)
+%             plot(speakerData(currentReceivingSpeakerIndex).microphones(currentMicIndex).recordings(currentTransmittingSpeakerIndex).computedIR)
+%             xlabel('Before correction')
                 
 %                plot(mlsSignal, 'g')
 %                hold on
@@ -730,7 +724,7 @@ end
 
     outputData = speakerData;
     elapsedTime = toc;
-    disp(sprintf('  > All IR computations done. Elapsed time: %d:%d [mm:ss]', floor(elapsedTime/60), round(elapsedTime - floor(elapsedTime/60)*60) ));
+    disp(sprintf('  > All IR computations done. Elapsed time: %.2d:%.2d [min:sec]', floor(elapsedTime/60), round(elapsedTime - floor(elapsedTime/60)*60) ));
 end
 
 
