@@ -1,0 +1,233 @@
+Id	0
+Ident Name	AVG
+Comment	Background noise mic 1 room
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Background noise
+Begin	10-19-15 09:17:09
+End	10-19-15 09:17:09
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	38,1	37,2	27,9	42,8	28,2	35,0	28,6	26,3	24,3	25,1	20,9	17,7	15,5	16,1	14,4	14,9	14,2	13,0	12,7	12,7	13,1	
+Id	1
+Ident Name	AVG
+Comment	Background noise mic 2 room
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Background noise
+Begin	10-19-15 09:17:09
+End	10-19-15 09:17:09
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	45,1	33,2	30,3	35,1	30,0	34,8	30,6	25,0	25,2	22,5	18,0	16,5	17,4	16,9	13,5	14,8	13,4	13,5	12,3	12,1	12,7	
+Id	6
+Ident Name	AVG
+Comment	background noise corridor mic 1
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Background noise
+Begin	10-19-15 09:53:27
+End	10-19-15 09:53:27
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	49,4	39,9	39,5	44,2	36,8	28,1	27,3	26,7	26,7	23,0	21,4	22,4	20,5	20,5	21,0	23,4	21,0	22,1	21,3	16,3	15,1	
+Id	7
+Ident Name	AVG
+Comment	background noise corridor mic 2
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Background noise
+Begin	10-19-15 09:53:27
+End	10-19-15 09:53:27
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	52,0	40,7	38,4	41,9	35,0	31,1	29,6	28,3	25,9	21,1	20,1	20,3	19,2	20,8	22,0	23,3	21,5	23,4	22,4	17,5	17,0	
+
+
+
+Id	35
+Ident Name	AVG
+Comment	in2out mic 1 (inside)
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Received noise
+Begin	10-19-15 10:23:44
+End	10-19-15 10:23:44
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	73,1	77,7	73,9	78,7	75,8	75,3	74,4	74,0	69,1	69,4	68,2	64,3	68,9	66,0	65,1	65,2	64,7	64,7	64,8	64,1	64,9	
+
+
+Id	36
+Ident Name	AVG
+Comment	in2out mic 2 (outside)
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Received noise
+Begin	10-19-15 10:23:44
+End	10-19-15 10:23:44
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	57,4	57,2	53,7	51,6	54,6	52,2	49,0	48,8	45,5	44,6	43,2	39,5	41,5	38,0	37,0	35,9	36,0	37,7	36,4	34,9	34,5	
+
+
+Id	39
+Ident Name	AVG
+Comment	out2in mic 1 (inside)
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Received noise
+Begin	10-19-15 10:27:40
+End	10-19-15 10:27:40
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	52,5	51,8	53,3	51,1	47,4	48,3	40,2	37,9	34,2	37,4	37,3	36,7	35,4	33,7	30,7	28,9	27,7	29,0	29,0	28,6	29,1	
+
+
+Id	40
+Ident Name	AVG
+Comment	out2in mic2 (outside)
+Origin	DBOPER32
+Family	Autospectrum
+Data Type	Leq
+Type	Received noise
+Begin	10-19-15 10:27:40
+End	10-19-15 10:27:40
+StudyBegin	
+StudyEnd	
+Period	0,000e+00
+Average	Average
+Average Duration	5,000e+00
+Where	 (Avg.)
+Coord	
+Unit	Pa	
+PowerUnit	RMS	
+Reference	2,000e-05	
+dB/Lin	dB	
+Weight	Lin
+Partial	3
+X unit	Hz
+X Min	50 Hz
+X Max	5 kHz
+Nb Elements	1
+	50 Hz	63 Hz	80 Hz	100 Hz	125 Hz	160 Hz	200 Hz	250 Hz	315 Hz	400 Hz	500 Hz	630 Hz	800 Hz	1 kHz	1.25 kHz	1.6 kHz	2 kHz	2.5 kHz	3.15 kHz	4 kHz	5 kHz
+	79,0	77,2	75,6	72,8	75,1	75,0	71,5	70,0	66,2	70,0	71,1	71,9	71,6	70,0	69,8	67,8	66,4	68,1	68,2	67,6	68,2	
