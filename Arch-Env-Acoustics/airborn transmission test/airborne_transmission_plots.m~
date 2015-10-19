@@ -225,7 +225,7 @@ xlabel('Frequency [Hz]');
 ylabel('[dB]');
 textH = text(15,-45,'R'' = D + 10*log10 (F_{separation}/A_{receiving room})');
 set(textH,'EdgeColor','k');
-% print(fig,'-dpdf','Apparent_sound_reduction_index.pdf')
+% print(fig,'-dpdf','Apparent_sound_reduction_index_wall.pdf')
 
 pause
 close all
