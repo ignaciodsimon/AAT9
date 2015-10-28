@@ -1,6 +1,15 @@
 function [avgP,theta ] = Capon(data, d, f0, angle_res )
 %CAPON computes the Capon spectrum of an wave impinging on an ULA
-%   Detailed explanation goes here
+%
+%   data = 3-D input matrix : [number of sensors x length of recording x number of observations]
+%          example : data(:,:,i) = signal_model(ImpDir,A,phi,f_0,SNR,t,L,g,delta);
+%   d = distance between two sensors
+%   f0 = carrier frequency
+%   angle_res = angle resolution (deg°)
+%
+%   Tobias van Baarsel
+%   AAU - 10/2015
+
 
 c0 = 3e8;
 lambda = c0/f0;
