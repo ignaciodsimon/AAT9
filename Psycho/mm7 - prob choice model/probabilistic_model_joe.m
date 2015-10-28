@@ -100,13 +100,24 @@ end
 % 3 - Compute the 95% confidence intervals
 confidence_intervals = 2 * 1.96 * sqrt(diag(cova));
 
-% 4 - Now we plot the scale values
+%% 4 - Now we plot the scale values
+
+hFig = figure(1);
+set(hFig, 'Position', [0 0 800 300])
+
 errorbar([1:10], u, confidence_intervals, 'o', 'MarkerSize', 5);
 xlim([1 10]);
-ylim([0 1.5]);
+ylim([0 1.3]);
 grid
 xlabel('Type of sound');
 ylabel('Unpleasentness');
+
+% Saves plot to PDF
+set(gcf, 'PaperPosition', [0 0 8.15 3.15]);
+set(gcf, 'PaperSize', [8.1 3.1]);
+saveas(gcf, 'errorplot', 'pdf');
+
+
 
 
 % Note:
