@@ -1,13 +1,13 @@
-function mini_project_adaptive_filtering()
+function filter_setup_batch_tester()
 
     clc
     disp(sprintf('Array sensor signal processing - AAU 2015\n    Adaptative filtering miniproject\n         Group 960 - Acoustics\n\n\n [ Previous steps ]\n'));
 
     % Simulation parameters
-    beta = 0.2;
-    filterLength = 300;
-    epsilon = 0.0001;
-    
+    beta = 0.4;
+    filterLength = 4000;
+    epsilon = 0.001;
+
     % ---- Load input audios ----
     peterSpeech = getPeterSpeech();
     karenSpeech = getKarenSpeech();
@@ -15,38 +15,52 @@ function mini_project_adaptive_filtering()
     % ---- Process signals ----
 
     % 1 - Karen through the speaker
-    karenSpeech = speakerResponse(karenSpeech);
+    karenAfterSpeaker = speakerResponse(karenSpeech);
 
-    % Summing Peter and Karen's voices
-    accumulatedSignal = (karenSpeech * 10^(-12/20)) + peterSpeech;
-    accumulatedSignal = accumulatedSignal / max(abs(accumulatedSignal));
-
-    % Peter and Karen reverberating on the car
-    accumulatedSignal = reverbCar(accumulatedSignal);
+    % 2 - Peter and Karen reverberating on the car
+    summedSignals = (karenAfterSpeaker * 10^(-12/20)) + peterSpeech;
+    summedSignals = summedSignals / max(abs(summedSignals));
+    reverberatingVoices = reverbCar(summedSignals);
 
     % 3 - Microphone response of all ambient signal on the car
-    accumulatedSignal = micResponse(accumulatedSignal);
+    micCaptured = micResponse(reverberatingVoices);
 
     % 4 - Additive noise produced by the whole system
-    accumulatedSignal = additiveNoise(accumulatedSignal);
+    accumulatedSignal = additiveNoise(micCaptured);
 
     disp(sprintf('\n [ Adaptative filtering ]\n'));
 
+    differences = zeros(2, 4);
+    columns = {'beta', 'filterLength', 'epsilon', 'error'};
+    counter = 1;
     % ---- Adaptive filtering ----
-    outputAudioNLMS_1 = nlms(karenSpeech, accumulatedSignal, beta, filterLength, epsilon);
+    for filterLength = [100 200 300 400 500 600 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000 20000 30000 40000]
+        for beta = [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1]
+            for epsilon = [0.0001 0.0005 0.001 0.005 0.01 0.05 0.1 0.5 1 2 5]
+                outputAudioNLMS = nlms(karenSpeech, accumulatedSignal, beta, filterLength, epsilon);
+
+                % Compute the difference
+                differences(counter, :) = [beta, filterLength, epsilon, norm(outputAudioNLMS - accumulatedSignal)];
+                counter = counter + 1;
+
+                % Save results to file
+                save('savedResults_nlms.mat', 'columns', 'differences');
+                disp(sprintf('Iteration #%d', counter));
+            end
+        end
+    end
 
     % ---- Saving processed audio data ----
-    audiowrite('peter_speech_audio.wav', peterSpeech, 44100);
-    audiowrite('accumulated_signal_audio.wav', accumulatedSignal, 44100);
-    audiowrite('output_audio_mic_speaker_real_noise_reverb.wav', outputAudioNLMS_1, 44100);
-    playAudios([accumulatedSignal, outputAudioNLMS_1]);
+    audiowrite('output_audio.wav', outputAudioNLMS, 44100);
+    playAudios([accumulatedSignal, outputAudioNLMS]);
+
 
     subplot(2,1,1)
     plot(accumulatedSignal)
     title('Mic signal')
     subplot(2,1,2)
-    plot(outputAudioNLMS_1)
-    title('Output 1')
+    plot(outputAudioNLMS)
+    title('Output')
 
 end
 
@@ -277,13 +291,13 @@ function output = additiveNoise(input)
 
     % Generates white noise (mean=0, var=1) and adjusts its amplitude
     % according to the requirements of SNR
-%     rng(0);
-%     noise = randn(size(input)) * (rms(input) / 10^(desiredSNR/20));
+    rng(0);
+    noise = randn(size(input)) * (rms(input) / 10^(desiredSNR/20));
 
-    % Noise from the recording
-    noise = audioread('input_audios/inside_car.wav');
-    noise = noise(600000 : 600000 + length(input) -1);
-    noise = noise /rms(noise) * (rms(input) / 10^(desiredSNR/20));
+%     % Noise from the recording
+%     noise = audioread('input_audios/inside_car.wav');
+%     noise = noise(600000 : 600000 + length(input) -1);
+%     noise = noise /rms(noise) * (rms(input) / 10^(desiredSNR/20));
 
     % Mixes the input signal with the noise
     noisyAudio = input + noise;
